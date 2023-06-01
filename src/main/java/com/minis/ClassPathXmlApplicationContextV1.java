@@ -11,6 +11,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.minis.beans.BeanDefinition;
+
 /**
  * ClassPathXmlApplicationContext 定义了唯一的构造函数，构造函数里会做两件事：
  * 一是提供一个 readXml() 方法，通过传入的文件路径，也就是 XML 文件的全路径名，来获取 XML 内的信息，

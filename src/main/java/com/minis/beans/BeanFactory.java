@@ -10,6 +10,9 @@ import com.minis.exceptions.BeansException;
  */
 public interface BeanFactory {
 	Object getBean(String beanName) throws BeansException;
-	Boolean containsBean(String name);
+	boolean containsBean(String name);
+	boolean isSingleton(String name);
+	boolean isPrototype(String name);
+	Class<?> getType(String name);
 	void registerBean(String beanName, Object obj);
 }
