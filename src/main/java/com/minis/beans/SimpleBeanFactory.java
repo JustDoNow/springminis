@@ -47,8 +47,18 @@ public class SimpleBeanFactory implements BeanFactory{
 		return singleton;
 	}
 
-	public void registerBeanDefinition(BeanDefinition beanDefinition) {
-		this.beanDefinitions.add(beanDefinition);
-		this.beanNames.add(beanDefinition.getId());
+	@Override
+	public Boolean containsBean(String name) {
+		return beanNames.contains(name);
 	}
+
+	@Override
+	public void registerBean(String beanName, Object obj) {
+
+		BeanDefinition beanDefinition = new BeanDefinition(beanName, obj.getClass().getSimpleName());
+		this.beanDefinitions.add(beanDefinition);
+		this.beanNames.add(beanName);
+	}
+
+
 }
