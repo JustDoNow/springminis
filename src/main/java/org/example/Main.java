@@ -1,0 +1,13 @@
+package org.example;
+
+/**
+ * ${NAME}
+ *
+ * @author qizhi
+ * @date 2023/06/01
+ */
+public class Main {
+	public static void main(String[] args) {
+		System.out.println("Hello world!");
+	}
+}
