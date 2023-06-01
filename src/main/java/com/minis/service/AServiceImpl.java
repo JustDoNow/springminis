@@ -1,20 +1,39 @@
 package com.minis.service;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * AServiceImpl
  *
  * @author qizhi
  * @date 2023/06/01
  */
+@Getter
+@Setter
 public class AServiceImpl implements AService {
-
+	private String name;
+	private int level;
 	private String property1;
+	private String property2;
+	private BaseService ref1;
 
-	public void setProperty1(String property1) {
-		this.property1 = property1;
+	public AServiceImpl() {
 	}
-
+	public AServiceImpl(String name, int level) {
+		this.name = name;
+		this.level = level;
+		System.out.println(this.name + "," + this.level);
+	}
 	public void sayHello() {
-		System.out.println("a service 1 say hello");
+		System.out.println(this.property1 + "," + this.property2);
 	}
+
+	@Override
+	public BaseService getRef1() {
+		return ref1;
+	}
+
+
+	// 在此省略property1和property2的setter、getter方法
 }

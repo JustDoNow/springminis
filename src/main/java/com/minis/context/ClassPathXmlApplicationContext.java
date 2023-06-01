@@ -16,15 +16,23 @@ import com.minis.exceptions.BeansException;
  * @date 2023/06/01
  */
 public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
-	BeanFactory beanFactory;
+	SimpleBeanFactory beanFactory;
 
 	public ClassPathXmlApplicationContext(String fileName) {
-		Resource resource = new ClassPathXmlResource(fileName);
-		SimpleBeanFactory beanFactory = new SimpleBeanFactory();
-		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
-		reader.loadBeanDefinitions(resource);
-		this.beanFactory = beanFactory;
+		this(fileName, true);
 	}
+
+	public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
+		Resource resource = new ClassPathXmlResource(fileName);
+		SimpleBeanFactory simpleBeanFactory = new SimpleBeanFactory();
+		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(simpleBeanFactory);
+		reader.loadBeanDefinitions(resource);
+		this.beanFactory = simpleBeanFactory;
+		if (isRefresh) {
+			this.beanFactory.refresh();
+		}
+	}
+
 	//context再对外提供一个getBean，底下就是调用的BeanFactory对应的方法
 	public Object getBean(String beanName) throws BeansException {
 		return this.beanFactory.getBean(beanName);

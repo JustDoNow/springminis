@@ -22,6 +22,11 @@ public class ClassPathXmlApplicationContextTest {
 		try {
 			aService = (AService)ctx.getBean("aservice");
 			aService.sayHello();
+
+			aService.getRef1().baseMethod();
+
+			aService.getRef1().getBbs().baseBaseMethod();
+
 		} catch (BeansException e) {
 			throw new RuntimeException(e);
 		}

@@ -18,6 +18,8 @@ public class BeanDefinition {
 	String SCOPE_SINGLETON = "singleton";
 	String SCOPE_PROTOTYPE = "prototype";
 	private boolean lazyInit = false;
+
+	/** 记录了某一个 Bean 引用的其他 Bean */
 	private String[] dependsOn;
 	private ArgumentValues constructorArgumentValues;
 	private PropertyValues propertyValues;
