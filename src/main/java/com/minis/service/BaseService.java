@@ -1,7 +1,6 @@
 package com.minis.service;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.minis.beans.factory.annotation.Autowired;
 
 /**
  * BaseService
@@ -9,14 +8,20 @@ import lombok.Setter;
  * @author qizhi
  * @date 2023/06/01
  */
-@Getter
-@Setter
 public class BaseService {
-
+	@Autowired
 	private BaseBaseService bbs;
-	// 省略 getter、setter方法
 
-	public void baseMethod() {
-		System.out.println(this.getClass().getName() + ": baseMethod");
+	public BaseBaseService getBbs() {
+		return bbs;
+	}
+	public void setBbs(BaseBaseService bbs) {
+		this.bbs = bbs;
+	}
+	public BaseService() {
+	}
+	public void sayHello() {
+		System.out.println("Base Service says Hello");
+		bbs.sayHello();
 	}
 }

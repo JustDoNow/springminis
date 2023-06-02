@@ -1,6 +1,7 @@
-package com.minis.beans;
+package com.minis.beans.factory.config;
 
-import com.minis.core.ArgumentValues;
+import java.util.Arrays;
+
 import com.minis.core.PropertyValues;
 
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class BeanDefinition {
 
 	/** 记录了某一个 Bean 引用的其他 Bean */
 	private String[] dependsOn;
-	private ArgumentValues constructorArgumentValues;
+	private ConstructorArgumentValues constructorArgumentValues;
 	private PropertyValues propertyValues;
 	private String initMethodName;
 	private volatile Object beanClass;
@@ -42,4 +43,21 @@ public class BeanDefinition {
 		return SCOPE_PROTOTYPE.equals(this.scope);
 	}
 	//省略getter和setter
+
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("BeanDefinition{");
+		sb.append("lazyInit=").append(lazyInit);
+		sb.append(", dependsOn=").append(Arrays.toString(dependsOn));
+		sb.append(", constructorArgumentValues=").append(constructorArgumentValues);
+		sb.append(", propertyValues=").append(propertyValues);
+		sb.append(", initMethodName='").append(initMethodName).append('\'');
+		sb.append(", beanClass=").append(beanClass);
+		sb.append(", id='").append(id).append('\'');
+		sb.append(", className='").append(className).append('\'');
+		sb.append(", scope='").append(scope).append('\'');
+		sb.append('}');
+		return sb.toString();
+	}
 }

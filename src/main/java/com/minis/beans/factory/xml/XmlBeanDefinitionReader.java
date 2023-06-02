@@ -1,12 +1,18 @@
-package com.minis.core;
+package com.minis.beans.factory.xml;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.dom4j.Element;
 
-import com.minis.beans.BeanDefinition;
-import com.minis.beans.SimpleBeanFactory;
+import com.minis.beans.factory.AbstractBeanFactory;
+import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.factory.config.ConstructorArgumentValue;
+import com.minis.beans.factory.config.ConstructorArgumentValues;
+import com.minis.beans.factory.support.SimpleBeanFactory;
+import com.minis.core.PropertyValue;
+import com.minis.core.PropertyValues;
+import com.minis.core.Resource;
 
 /**
  * 在 XmlBeanDefinitionReader 中，有一个 loadBeanDefinitions 方法会把解析的 XML 内容转换成 BeanDefinition，
@@ -16,10 +22,16 @@ import com.minis.beans.SimpleBeanFactory;
  * @date 2023/06/01
  */
 public class XmlBeanDefinitionReader {
+	AbstractBeanFactory beanFactory;
+
 	SimpleBeanFactory simpleBeanFactory;
 
-	public XmlBeanDefinitionReader(SimpleBeanFactory simpleBeanFactory) {
-		this.simpleBeanFactory = simpleBeanFactory;
+	public XmlBeanDefinitionReader(AbstractBeanFactory beanFactory) {
+		this.beanFactory = beanFactory;
+	}
+
+	public XmlBeanDefinitionReader(SimpleBeanFactory beanFactory) {
+		this.simpleBeanFactory = beanFactory;
 	}
 
 	public void loadBeanDefinitionsV1(Resource resource) {
@@ -28,7 +40,7 @@ public class XmlBeanDefinitionReader {
 			String beanID = element.attributeValue("id");
 			String beanClassName = element.attributeValue("class");
 			BeanDefinition beanDefinition = new BeanDefinition(beanID, beanClassName);
-			this.simpleBeanFactory.registerBeanDefinition(beanDefinition);
+			this.beanFactory.registerBeanDefinition(beanID, beanDefinition);
 		}
 	}
 
@@ -42,12 +54,12 @@ public class XmlBeanDefinitionReader {
 					beanClassName);
 			// handle constructor
 			List<Element> constructorElements = element.elements("constructor-arg");
-					ArgumentValues AVS = new ArgumentValues();
+					ConstructorArgumentValues AVS = new ConstructorArgumentValues();
 			for (Element e : constructorElements) {
 				String aType = e.attributeValue("type");
 				String aName = e.attributeValue("name");
 				String aValue = e.attributeValue("value");
-				AVS.addArgumentValue(new ArgumentValue(aType, aName, aValue));
+				AVS.addArgumentValue(new ConstructorArgumentValue(aType, aName, aValue));
 			}
 			beanDefinition.setConstructorArgumentValues(AVS);
 
@@ -78,7 +90,7 @@ public class XmlBeanDefinitionReader {
 			// setDependsOn 方法，它记录了某一个 Bean 引用的其他 Bean
 			beanDefinition.setDependsOn(refArray);
 
-			this.simpleBeanFactory.registerBeanDefinition(beanID, beanDefinition);
+			this.beanFactory.registerBeanDefinition(beanID, beanDefinition);
 		}
 	}
 }

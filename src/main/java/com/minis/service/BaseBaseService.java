@@ -20,4 +20,8 @@ public class BaseBaseService {
 	public void baseBaseMethod() {
 		System.out.println(this.getClass().getName() + ": baseBaseMethod");
 	}
+
+	public void sayHello() {
+		System.out.println(this.getClass().getName() + ".sayHello");
+	}
 }

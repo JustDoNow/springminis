@@ -11,7 +11,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.minis.beans.BeanDefinition;
+import com.minis.beans.factory.config.BeanDefinition;
 
 /**
  * ClassPathXmlApplicationContext 定义了唯一的构造函数，构造函数里会做两件事：

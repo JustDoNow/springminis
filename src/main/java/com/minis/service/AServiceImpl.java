@@ -1,5 +1,7 @@
 package com.minis.service;
 
+import com.minis.beans.factory.annotation.Autowired;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +18,9 @@ public class AServiceImpl implements AService {
 	private int level;
 	private String property1;
 	private String property2;
-	private BaseService ref1;
+
+	@Autowired
+	private BaseService baseservice;
 
 	public AServiceImpl() {
 	}
@@ -31,7 +35,7 @@ public class AServiceImpl implements AService {
 
 	@Override
 	public BaseService getRef1() {
-		return ref1;
+		return baseservice;
 	}
 
 
