@@ -14,5 +14,5 @@ public interface BeanFactory {
 	boolean isSingleton(String name);
 	boolean isPrototype(String name);
 	Class<?> getType(String name);
-	void registerBean(String beanName, Object obj);
+//	void registerBean(String beanName, Object obj);
 }

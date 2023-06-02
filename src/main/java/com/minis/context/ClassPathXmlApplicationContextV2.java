@@ -2,11 +2,12 @@ package com.minis.context;
 
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.support.SimpleBeanFactory;
-import com.minis.core.ApplicationEvent;
-import com.minis.core.ApplicationEventPublisher;
+import com.minis.core.event.ApplicationEvent;
+import com.minis.core.event.ApplicationEventPublisher;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
+import com.minis.core.event.ApplicationListener;
 import com.minis.exceptions.BeansException;
 
 /**
@@ -60,13 +61,18 @@ public class ClassPathXmlApplicationContextV2 implements BeanFactory, Applicatio
 		return this.beanFactory.getType(name);
 	}
 
-	@Override
-	public void registerBean(String beanName, Object obj) {
-		this.beanFactory.registerBean(beanName, obj);
-	}
+//	@Override
+//	public void registerBean(String beanName, Object obj) {
+//		this.beanFactory.registerBean(beanName, obj);
+//	}
 
 	@Override
 	public void publishEvent(ApplicationEvent event) {
+
+	}
+
+	@Override
+	public void addApplicationListener(ApplicationListener listener) {
 
 	}
 }

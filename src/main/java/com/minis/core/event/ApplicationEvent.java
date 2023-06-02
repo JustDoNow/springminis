@@ -1,4 +1,4 @@
-package com.minis.core;
+package com.minis.core.event;
 
 import java.util.EventObject;
 
@@ -8,10 +8,11 @@ import java.util.EventObject;
  * @author qizhi
  * @date 2023/06/01
  */
-
-public class ApplicationEvent  extends EventObject {
+public class ApplicationEvent extends EventObject {
 	private static final long serialVersionUID = 1L;
+	protected String msg = null;
 	public ApplicationEvent(Object arg0) {
 		super(arg0);
+		this.msg = arg0.toString();
 	}
 }

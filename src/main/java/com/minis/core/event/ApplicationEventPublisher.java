@@ -1,4 +1,4 @@
-package com.minis.core;
+package com.minis.core.event;
 
 
 /**
@@ -9,4 +9,5 @@ package com.minis.core;
  */
 public interface ApplicationEventPublisher {
 	void publishEvent(ApplicationEvent event);
+	void addApplicationListener(ApplicationListener listener);
 }
