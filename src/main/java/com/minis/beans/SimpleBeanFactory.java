@@ -33,10 +33,19 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
 	public void registerBeanDefinition(String name, BeanDefinition beanDefinition) {
 		this.beanDefinitionMap.put(name, beanDefinition);
 		this.beanDefinitionNames.add(name);
-		if (!beanDefinition.isLazyInit()) {
-			try {
-				getBean(name);
-			} catch (BeansException e) {
+	}
+
+	/**
+	 * 全部加载完xml，再解析bean，否则前面的bean引用后面的bean时，内存里无法找到bean的定义
+	 */
+	public void loadAllNonLazyBeans() {
+		for (String beanName : beanDefinitionMap.keySet()) {
+			if (!beanDefinitionMap.get(beanName).isLazyInit()) {
+				try {
+					getBean(beanName);
+				} catch (BeansException ignored) {
+
+				}
 			}
 		}
 	}
@@ -45,6 +54,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
 	@Override
 	public Object getBean(String beanName) throws BeansException {
 		//先尝试直接从容器中获取bean实例
+		System.out.println(Thread.currentThread().getName() + "-" + System.currentTimeMillis() + "-" + "getBean:" + beanName);
 		Object singleton = this.getSingleton(beanName);
 		if (singleton == null) {
 			//如果没有实例，则尝试从毛胚实例中获取

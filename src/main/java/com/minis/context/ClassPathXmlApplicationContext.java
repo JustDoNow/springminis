@@ -27,6 +27,8 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
 		SimpleBeanFactory simpleBeanFactory = new SimpleBeanFactory();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(simpleBeanFactory);
 		reader.loadBeanDefinitions(resource);
+//		simpleBeanFactory.loadAllNonLazyBeans();
+
 		this.beanFactory = simpleBeanFactory;
 		if (isRefresh) {
 			this.beanFactory.refresh();

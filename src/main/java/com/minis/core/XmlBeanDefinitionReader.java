@@ -78,7 +78,6 @@ public class XmlBeanDefinitionReader {
 			// setDependsOn 方法，它记录了某一个 Bean 引用的其他 Bean
 			beanDefinition.setDependsOn(refArray);
 
-			//FIXME 边加载xml，边解析bean，存在问题：前面的bean引用后面的bean时，内存里无法找到bean的定义
 			this.simpleBeanFactory.registerBeanDefinition(beanID, beanDefinition);
 		}
 	}
