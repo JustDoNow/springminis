@@ -211,6 +211,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
 				obj = clz.newInstance();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("beanDefinition:" + beanDefinition.toString(), e);
 		}
 		System.out.println(beanDefinition.getId() + " bean created. " +

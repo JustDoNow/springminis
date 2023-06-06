@@ -1,4 +1,4 @@
-package com.minis.service;
+package com.minis.test.service;
 
 import com.minis.beans.factory.annotation.Autowired;
 
@@ -20,7 +20,7 @@ public class AServiceImpl implements AService {
 	private String property2;
 
 	@Autowired
-	private BaseService baseservice;
+	private BaseService baseService;
 
 	public AServiceImpl() {
 	}
@@ -35,7 +35,11 @@ public class AServiceImpl implements AService {
 
 	@Override
 	public BaseService getRef1() {
-		return baseservice;
+		return baseService;
+	}
+
+	public void setRef1(BaseService baseservice) {
+		this.baseService = baseservice;
 	}
 
 

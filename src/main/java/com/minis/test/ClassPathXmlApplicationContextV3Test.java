@@ -4,8 +4,8 @@ import org.junit.Test;
 
 import com.minis.context.ClassPathXmlApplicationContextV3;
 import com.minis.exceptions.BeansException;
-import com.minis.service.AService;
-import com.minis.service.BaseService;
+import com.minis.test.service.AService;
+import com.minis.test.service.BaseService;
 
 /**
  * ClassPathXmlApplicationContextTest

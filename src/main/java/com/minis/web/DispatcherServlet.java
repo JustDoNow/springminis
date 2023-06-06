@@ -2,6 +2,7 @@ package com.minis.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -16,6 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.minis.beans.factory.annotation.Autowired;
+import com.minis.exceptions.BeansException;
 
 /**
  * DispatcherServlet
@@ -39,20 +43,49 @@ public class DispatcherServlet extends HttpServlet {
 
 	private String sContextConfigLocation;
 
+	private WebApplicationContext webApplicationContext;
 
+
+//	@Override
+//	public void init(ServletConfig config) throws ServletException {
+//		super.init(config);
+//
+//		sContextConfigLocation = config.getInitParameter("contextConfigLocation");
+//
+//		URL xmlPath = null;
+//		try {
+//			xmlPath = this.getServletContext().getResource(sContextConfigLocation);
+//		} catch (MalformedURLException e) {
+//			e.printStackTrace();
+//		}
+//
+//		this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
+//
+//		refresh();
+//	}
+
+
+	/**
+	 * 首先在 Servlet 初始化的时候，从 servletContext 里获取属性，拿到 Listener 启动的时候注册好的 WebApplicationContext，
+	 * 然后拿到 Servlet 配置参数 contextConfigLocation，这个参数代表的是配置文件路径，
+	 * 这个时候是我们的 MVC 用到的配置文件，如 minisMVC-servlet.xml，之后再扫描路径下的包，
+	 * 调用 refresh() 方法加载 Bean。
+	 * 这样，DispatcherServlet 也就初始化完毕了。
+	 *
+	 * @throws ServletException
+	 */
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-
+		this.webApplicationContext = (WebApplicationContext)
+				this.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 		sContextConfigLocation = config.getInitParameter("contextConfigLocation");
-
 		URL xmlPath = null;
 		try {
 			xmlPath = this.getServletContext().getResource(sContextConfigLocation);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-
 		this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
 
 		refresh();
@@ -78,12 +111,41 @@ public class DispatcherServlet extends HttpServlet {
 			}
 			try {
 				obj = clz.newInstance(); //实例化bean
+
+				populateBean(obj,controllerName);
+
 				this.controllerObjs.put(controllerName, obj);
 			} catch (Exception e) {
 			}
 		}
 	}
 
+	protected Object populateBean(Object bean, String beanName) throws BeansException {
+		Object result = bean;
+
+		Class<?> clazz = bean.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+		if(fields!=null){
+			for(Field field : fields){
+				boolean isAutowired = field.isAnnotationPresent(Autowired.class);
+				if(isAutowired){
+					String fieldName = field.getName();
+					Object autowiredObj = this.webApplicationContext.getBean(fieldName);
+					try {
+						field.setAccessible(true);
+						field.set(bean, autowiredObj);
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		}
+
+		return result;
+	}
 
 	private List<String> scanPackages(List<String> packages) {
 		List<String> tempControllerNames = new ArrayList<>();
@@ -92,6 +154,7 @@ public class DispatcherServlet extends HttpServlet {
 		}
 		return tempControllerNames;
 	}
+
 	private List<String> scanPackage(String packageName) {
 		List<String> tempControllerNames = new ArrayList<>();
 		URI uri = null;
@@ -104,11 +167,11 @@ public class DispatcherServlet extends HttpServlet {
 		File dir = new File(uri);
 		//处理对应的文件目录
 		for (File file : dir.listFiles()) { //目录下的文件或者子目录
-			if(file.isDirectory()){ //对子目录递归扫描
-				scanPackage(packageName+"."+file.getName());
-			}else{ //类文件
-				String controllerName = packageName +"."
-						+file.getName().replace(".class", "");
+			if (file.isDirectory()) { //对子目录递归扫描
+				scanPackage(packageName + "." + file.getName());
+			} else { //类文件
+				String controllerName = packageName + "."
+						+ file.getName().replace(".class", "");
 				tempControllerNames.add(controllerName);
 			}
 		}
@@ -122,12 +185,10 @@ public class DispatcherServlet extends HttpServlet {
 			Method[] methods = clazz.getDeclaredMethods();
 			if (methods != null) {
 				for (Method method : methods) {
-					//检查所有的方法
 					boolean isRequestMapping =
 							method.isAnnotationPresent(RequestMapping.class);
-					if (isRequestMapping) { //有RequestMapping注解
+					if (isRequestMapping) {
 						String methodName = method.getName();
-						//建立方法名和URL的映射
 						String urlMapping =
 								method.getAnnotation(RequestMapping.class).value();
 						this.urlMappingNames.add(urlMapping);
@@ -151,9 +212,11 @@ public class DispatcherServlet extends HttpServlet {
 			obj = this.mappingObjs.get(sPath);
 			objResult = method.invoke(obj);
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		response.setContentType("text/html; charset=UTF-8");
+		System.out.println("objResult:" + objResult);
 		response.getWriter().append(objResult.toString());
 	}
 

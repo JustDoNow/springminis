@@ -1,4 +1,6 @@
-package com.minis.service;
+package com.minis.test.service;
+
+import com.minis.beans.factory.annotation.Autowired;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +15,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BaseBaseService {
-	private AServiceImpl as;
+
+	@Autowired
+	private AService aService;
 	// 省略 getter、setter方法
 
 

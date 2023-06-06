@@ -1,4 +1,4 @@
-package com.minis.service;
+package com.minis.test.service;
 
 /**
  * AService
