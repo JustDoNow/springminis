@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.minis.beans.factory.annotation.BeanPostProcessor;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * AutowireCapableBeanFactory

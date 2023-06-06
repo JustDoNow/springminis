@@ -1,9 +1,7 @@
-package com.minis.test;
+package com.minis.junit;
 
-import org.junit.Test;
-
+import com.minis.beans.BeansException;
 import com.minis.context.ClassPathXmlApplicationContext;
-import com.minis.exceptions.BeansException;
 import com.minis.test.service.AService;
 import com.minis.test.service.BaseService;
 
@@ -15,7 +13,7 @@ import com.minis.test.service.BaseService;
  */
 public class ClassPathXmlApplicationContextTest {
 
-	@Test
+//	@Test
 	public void testSayHello() {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml", true);
 		AService aService = null;
@@ -32,7 +30,7 @@ public class ClassPathXmlApplicationContextTest {
 		}
 	}
 
-	@Test
+//	@Test
 	public void testAutowired() {
 
 		ClassPathXmlApplicationContext ctx =

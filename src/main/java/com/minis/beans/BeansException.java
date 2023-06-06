@@ -1,4 +1,4 @@
-package com.minis.exceptions;
+package com.minis.beans;
 
 /**
  * BeansException

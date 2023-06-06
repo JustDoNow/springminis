@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import com.minis.beans.factory.AbstractAutowireCapableBeanFactory;
 import com.minis.beans.factory.BeanFactory;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * 判断类里面的每一个属性是不是带有 Autowired 注解，如果有，就根据属性名获取 Bean。

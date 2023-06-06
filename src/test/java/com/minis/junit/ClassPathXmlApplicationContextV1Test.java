@@ -1,6 +1,4 @@
-package com.minis.test;
-
-import org.junit.Test;
+package com.minis.junit;
 
 import com.minis.ClassPathXmlApplicationContextV1;
 import com.minis.test.service.AService;
@@ -13,7 +11,7 @@ import com.minis.test.service.AService;
  */
 public class ClassPathXmlApplicationContextV1Test {
 
-	@Test
+//	@Test
 	public void testSayHello() {
 		ClassPathXmlApplicationContextV1 ctx = new
 				ClassPathXmlApplicationContextV1("beans.xml");

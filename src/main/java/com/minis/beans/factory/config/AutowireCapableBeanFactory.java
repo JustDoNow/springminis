@@ -1,7 +1,7 @@
 package com.minis.beans.factory.config;
 
 import com.minis.beans.factory.BeanFactory;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * AutowireCapableBeanFactory

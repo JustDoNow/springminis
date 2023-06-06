@@ -17,7 +17,7 @@ import com.minis.beans.factory.support.BeanDefinitionRegistry;
 import com.minis.beans.factory.support.DefaultSingletonBeanRegistry;
 import com.minis.core.PropertyValue;
 import com.minis.core.PropertyValues;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * <p>
@@ -61,22 +61,28 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
 				//如果连毛胚都没有，则创建bean实例并注册
 				System.out.println("get bean null -------------- " + beanName);
 				BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-				singleton = createBean(beanDefinition);
-				this.registerBean(beanName, singleton);
-				// 进行beanPostProcessor处理
-				// step 1: postProcessBeforeInitialization
-				applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
-				// step 2: init-method
-				if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().equals("")) {
-					invokeInitMethod(beanDefinition, singleton);
+				if (beanDefinition != null) {
+					singleton = createBean(beanDefinition);
+					this.registerBean(beanName, singleton);
+					// 进行beanPostProcessor处理
+					// step 1: postProcessBeforeInitialization
+					applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+					// step 2: init-method
+					if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().equals("")) {
+						invokeInitMethod(beanDefinition, singleton);
+					}
+					// step 3: postProcessAfterInitialization
+					applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+
+				} else {
+					return null;
 				}
-				// step 3: postProcessAfterInitialization
-				applyBeanPostProcessorsAfterInitialization(singleton, beanName);
 			}
 		}
 
 		return singleton;
 	}
+
 	private void invokeInitMethod(BeanDefinition beanDefinition, Object obj) {
 		Class<?> clz = beanDefinition.getClass();
 		Method method = null;
@@ -171,7 +177,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
 			// handle constructor
 			ConstructorArgumentValues constructorArgumentValues =
 					beanDefinition.getConstructorArgumentValues();
-			if (!constructorArgumentValues.isEmpty()) {
+			if (constructorArgumentValues != null && !constructorArgumentValues.isEmpty()) {
 				Class<?>[] paramTypes = new Class<?>
 						[constructorArgumentValues.getArgumentCount()];
 				Object[] paramValues = new
@@ -229,7 +235,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
 				beanDefinition.getId());
 		PropertyValues propertyValues = beanDefinition.getPropertyValues();
 		//如果有属性
-		if (!propertyValues.isEmpty()) {
+		if (propertyValues != null && !propertyValues.isEmpty()) {
 			for (int i = 0; i < propertyValues.size(); i++) {
 				PropertyValue propertyValue =
 						propertyValues.getPropertyValueList().get(i);

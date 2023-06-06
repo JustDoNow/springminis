@@ -15,7 +15,7 @@ import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
 import com.minis.core.PropertyValue;
 import com.minis.core.PropertyValues;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * 我们让 SimpleBeanFactory 实现了 BeanDefinitionRegistry，这样 SimpleBeanFactory 既是一个工厂同时也是一个仓库。

@@ -6,14 +6,11 @@ import com.minis.beans.factory.AbstractAutowireCapableBeanFactory;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
-import com.minis.beans.factory.config.DefaultListableBeanFactory;
+import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
 import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
-import com.minis.core.event.ApplicationEvent;
-import com.minis.core.event.ApplicationEventPublisher;
-import com.minis.core.event.ApplicationListener;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * 支持注解的解析

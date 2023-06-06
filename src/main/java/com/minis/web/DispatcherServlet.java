@@ -1,7 +1,6 @@
 package com.minis.web;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -18,8 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.minis.beans.BeansException;
 import com.minis.beans.factory.annotation.Autowired;
-import com.minis.exceptions.BeansException;
+import com.minis.web.servlet.HandlerAdapter;
+import com.minis.web.servlet.HandlerMethod;
+import com.minis.web.servlet.RequestMappingHandlerAdapter;
+import com.minis.web.servlet.RequestMappingHandlerMapping;
 
 /**
  * DispatcherServlet
@@ -29,6 +32,15 @@ import com.minis.exceptions.BeansException;
  */
 public class DispatcherServlet extends HttpServlet {
 
+	public static final String WEB_APPLICATION_CONTEXT_ATTRIBUTE = DispatcherServlet.class.getName() + ".CONTEXT";
+
+	private WebApplicationContext webApplicationContext;
+	// 按照时序关系，Listener 启动在前，对应的上下文我们把它叫作 parentApplicationContext
+	private WebApplicationContext parentApplicationContext;
+
+	private RequestMappingHandlerMapping handlerMapping;
+
+	private RequestMappingHandlerAdapter handlerAdapter;
 
 	private List<String> packageNames = new ArrayList<>();
 	private Map<String, Object> controllerObjs = new HashMap<>();
@@ -37,14 +49,7 @@ public class DispatcherServlet extends HttpServlet {
 	private List<String> urlMappingNames = new ArrayList<>();
 	private Map<String, Object> mappingObjs = new HashMap<>();
 	private Map<String, Method> mappingMethods = new HashMap<>();
-
-	private Map<String, MappingValue> mappingValues;
-	private Map<String, Class<?>> mappingClz = new HashMap<>();
-
 	private String sContextConfigLocation;
-
-	private WebApplicationContext webApplicationContext;
-
 
 //	@Override
 //	public void init(ServletConfig config) throws ServletException {
@@ -77,9 +82,11 @@ public class DispatcherServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		this.webApplicationContext = (WebApplicationContext)
+		this.parentApplicationContext = (WebApplicationContext)
 				this.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-		sContextConfigLocation = config.getInitParameter("contextConfigLocation");
+		sContextConfigLocation =
+				config.getInitParameter("contextConfigLocation");
+
 		URL xmlPath = null;
 		try {
 			xmlPath = this.getServletContext().getResource(sContextConfigLocation);
@@ -87,16 +94,27 @@ public class DispatcherServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		this.packageNames = XmlScanComponentHelper.getNodeValue(xmlPath);
+		this.webApplicationContext = new
+				AnnotationConfigWebApplicationContext(sContextConfigLocation, this.parentApplicationContext);
 
 		refresh();
 	}
 
 
 	protected void refresh() {
-		initController(); // 初始化 controller
-		initMapping(); // 初始化 url 映射
+		// 初始化 controller
+		initController();
+
+		initHandlerMappings(this.webApplicationContext);
+		initHandlerAdapters(this.webApplicationContext);
 	}
 
+	protected void initHandlerMappings(WebApplicationContext wac) {
+		this.handlerMapping = new RequestMappingHandlerMapping(wac);
+	}
+	protected void initHandlerAdapters(WebApplicationContext wac) {
+		this.handlerAdapter = new RequestMappingHandlerAdapter(wac);
+	}
 
 	protected void initController() {
 		//扫描包，获取所有类名
@@ -200,24 +218,48 @@ public class DispatcherServlet extends HttpServlet {
 		}
 	}
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String sPath = request.getServletPath();
-		if (!this.urlMappingNames.contains(sPath)) {
-			return;
-		}
-		Object obj = null;
-		Object objResult = null;
+//	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		String sPath = request.getServletPath();
+//		if (!this.urlMappingNames.contains(sPath)) {
+//			return;
+//		}
+//		Object obj = null;
+//		Object objResult = null;
+//		try {
+//			Method method = this.mappingMethods.get(sPath);
+//			obj = this.mappingObjs.get(sPath);
+//			objResult = method.invoke(obj);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		response.setContentType("text/html; charset=UTF-8");
+//		System.out.println("objResult:" + objResult);
+//		response.getWriter().append(objResult.toString());
+//	}
+
+	protected void service(HttpServletRequest request, HttpServletResponse
+			response) {
+		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+				this.webApplicationContext);
 		try {
-			Method method = this.mappingMethods.get(sPath);
-			obj = this.mappingObjs.get(sPath);
-			objResult = method.invoke(obj);
+			doDispatch(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		response.setContentType("text/html; charset=UTF-8");
-		System.out.println("objResult:" + objResult);
-		response.getWriter().append(objResult.toString());
+		finally {
+		}
+	}
+	protected void doDispatch(HttpServletRequest request, HttpServletResponse
+			response) throws Exception{
+		HttpServletRequest processedRequest = request;
+		HandlerMethod handlerMethod = null;
+		handlerMethod = this.handlerMapping.getHandler(processedRequest);
+		if (handlerMethod == null) {
+			return;
+		}
+		HandlerAdapter ha = this.handlerAdapter;
+		ha.handle(processedRequest, response, handlerMethod);
 	}
 
 }

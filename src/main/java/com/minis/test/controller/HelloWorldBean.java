@@ -1,4 +1,4 @@
-package com.minis.test;
+package com.minis.test.controller;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

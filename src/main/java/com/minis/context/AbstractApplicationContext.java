@@ -9,8 +9,7 @@ import com.minis.beans.factory.annotation.BeanPostProcessor;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.core.env.Environment;
-import com.minis.core.event.ApplicationEventPublisher;
-import com.minis.exceptions.BeansException;
+import com.minis.beans.BeansException;
 
 /**
  * AbstractApplicationContext
@@ -77,14 +76,14 @@ public abstract class AbstractApplicationContext implements ApplicationContext{
 		registerListeners();
 		finishRefresh();
 	}
-	abstract void registerListeners();
-	abstract void initApplicationEventPublisher();
-	abstract void postProcessBeanFactory(ConfigurableListableBeanFactory
+	public abstract void registerListeners();
+	public abstract void initApplicationEventPublisher();
+	public abstract void postProcessBeanFactory(ConfigurableListableBeanFactory
 												 beanFactory);
-	abstract void registerBeanPostProcessors(ConfigurableListableBeanFactory
+	public abstract void registerBeanPostProcessors(ConfigurableListableBeanFactory
 													 beanFactory);
-	abstract void onRefresh();
-	abstract void finishRefresh();
+	public abstract void onRefresh();
+	public abstract void finishRefresh();
 
 	@Override
 	public void registerSingleton(String beanName, Object singletonObject) {
