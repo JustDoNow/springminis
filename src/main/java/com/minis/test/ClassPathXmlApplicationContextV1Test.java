@@ -1,7 +1,8 @@
-package com.minis;
+package com.minis.test;
 
 import org.junit.Test;
 
+import com.minis.ClassPathXmlApplicationContextV1;
 import com.minis.service.AService;
 
 /**

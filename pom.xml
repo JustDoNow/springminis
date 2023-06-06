@@ -7,12 +7,42 @@
     <groupId>org.example</groupId>
     <artifactId>springminis</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <showWarnings>true</showWarnings>
+        <env>dev</env>
     </properties>
+
+    <!--    <profiles>-->
+    <!--        <profile>-->
+    <!--            <id>dev</id>-->
+    <!--            <properties>-->
+    <!--                <env>dev</env>-->
+    <!--                &lt;!&ndash; 指定连接文件 &ndash;&gt;-->
+    <!--                &lt;!&ndash;<exclude-config>config/spring-jdbc.xml</exclude-config>&ndash;&gt;-->
+    <!--            </properties>-->
+    <!--            &lt;!&ndash;默认dev环境&ndash;&gt;-->
+    <!--            <activation>-->
+    <!--                <activeByDefault>true</activeByDefault>-->
+    <!--            </activation>-->
+    <!--        </profile>-->
+    <!--        <profile>-->
+    <!--            <id>sit</id>-->
+    <!--            <properties>-->
+    <!--                <env>sit</env>-->
+    <!--            </properties>-->
+    <!--        </profile>-->
+    <!--        <profile>-->
+    <!--            <id>prd</id>-->
+    <!--            <properties>-->
+    <!--                <env>prd</env>-->
+    <!--            </properties>-->
+    <!--        </profile>-->
+    <!--    </profiles>-->
 
     <dependencies>
         <dependency>
@@ -28,12 +58,141 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.tomcat.embed</groupId>-->
+        <!--            <artifactId>tomcat-embed-core</artifactId>-->
+        <!--            <version>10.1.6</version>-->
+        <!--        </dependency>-->
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13</version>
-            <scope>test</scope>
+            <version>4.13.1</version>
+            <!--            <scope>test</scope>-->
         </dependency>
 
     </dependencies>
+
+
+    <build>
+        <!--构建项目1：构建后的项目名称-->
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <!--构建项目2：引用环境隔离文件-->
+        <filters>
+            <filter>src/main/resources/deploy/env-${env}.properties</filter>
+        </filters>
+        <!--构建项目3：项目各文件加载路径-->
+        <!-- filtering，构建过程中是否对资源进行过滤，默认false -->
+        <!-- filters，给出对资源文件进行过滤的属性文件的路径，默认位于${basedir}/src/main/filters/目录下。属性文件中定义若干键值对。在构建过程中，对于资源文件中出现的变量（键），将使用属性文件中该键对应的值替换。 -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <excludes>
+                    <exclude>deploy/**</exclude>
+                    <!--<exclude>${exclude-config}</exclude>-->
+                </excludes>
+            </resource>
+        </resources>
+        <!--给出构建过程中所用到的插件-->
+        <plugins>
+            <!--编译java代码配置-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showWarnings>${showWarnings}</showWarnings>
+                    <!--<skip>${scom.suye.testtest}</skip>-->
+                </configuration>
+            </plugin>
+            <!--处理配置文件-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-resources-plugin</artifactId>-->
+            <!--                <version>3.2.0</version>-->
+            <!--                <configuration>-->
+            <!--                    <encoding>${project.build.sourceEncoding}</encoding>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-surefire-plugin</artifactId>-->
+            <!--                <version>2.22.2</version>-->
+            <!--                <configuration>-->
+            <!--                    <skip>true</skip>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-resources</id>-->
+<!--                        <phase>validate</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>${project.build.directory}/META-INF</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    <directory>${basedir}/src/main/resources/META-INF</directory>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-war-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <packagingExcludes>WEB-INF/web.xml</packagingExcludes>-->
+<!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <classpathPrefix>${project.build.directory}/WEB-INF/classes</classpathPrefix>-->
+<!--                            <addClasspath>true</addClasspath>-->
+<!--&lt;!&ndash;                            <mainClass>com.blw.linemanager.Application</mainClass>&ndash;&gt;-->
+<!--                        </manifest>-->
+<!--&lt;!&ndash;                        <manifestFile>${project.build.directory}/META-INF/MANIFEST.MF</manifestFile>&ndash;&gt;-->
+<!--                    </archive>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+            </plugin>
+
+
+        </plugins>
+
+    </build>
 
 </project>
